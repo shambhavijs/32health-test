@@ -1,0 +1,13 @@
+.editFieldWrapper {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-gap: 25px;
+    padding: 0 20px;
+    align-items: center;
+}
+
+.label {
+    width: 50px;
+    display: flex;
+    align-items: center;
+}
