@@ -17,11 +17,6 @@ export const userDataSlice = createSlice({
         updateCurrentUser: (state, action) => {
             state.currentUser = action.payload;
         }, 
-        //edit user's info on open modal
-        editCurrentUser: (state, action) => {
-            const field = action.payload[0];
-            state.currentUser[field] = action.payload[1];
-        },
         //delete user from array
         deleteUserData: (state, action) => {
             state.userData = state.userData.filter((user) => {
@@ -30,9 +25,10 @@ export const userDataSlice = createSlice({
         },
         //update user data after modal is closed
         updateUserData: (state, action) => {
-            const id = action.payload.id;
+            const id = action.payload[1];
             const userIndex = state.userData.findIndex(user => user.id === id);
-            state.userData[userIndex] = action.payload;
+            const currentUserData = state.userData[userIndex];
+            state.userData[userIndex] = {...currentUserData, ...action.payload[0]};
         },
         //like or unlike user
         setLikedUser: (state, action) => {
@@ -44,5 +40,5 @@ export const userDataSlice = createSlice({
      }
 })
 
-export const { setUserData, updateCurrentUser, editCurrentUser, deleteUserData, updateUserData, setLikedUser } = userDataSlice.actions;
+export const { setUserData, updateCurrentUser, deleteUserData, updateUserData, setLikedUser } = userDataSlice.actions;
 export default userDataSlice.reducer;

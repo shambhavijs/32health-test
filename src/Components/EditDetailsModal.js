@@ -1,58 +1,109 @@
-import { Modal, Input } from 'antd';
-import React, { useEffect, useState } from 'react';
-import styles from '../styles/EditDetailsModal.module.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { editCurrentUser } from '../userDataSlice';
-
+import { Modal, Input, Form, InputNumber } from 'antd';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function EditDetailsModal(props) {
-  const dispatch = useDispatch();
   const { isModalOpen, handleCloseModal, handleCancel } = props;
   const data = useSelector((state) => state.currentUser);
   const currentUser = data.currentUser;
 
-  //to handle change in input fields and edit currentUser data in state
-  function handleChange(field, value) {
-    //input field should not be empty
-    if(value !== ""){
-      dispatch(editCurrentUser([field, value]));
-    }
-  } 
+  const layout = {
+    labelCol: {
+      span: 8,
+    },
+    wrapperCol: {
+      span: 16,
+    },
+  };
+
+  const validateMessages = {
+    required: '${label} is required!',
+    types: {
+      email: '${label} is not a valid email!',
+      number: '${label} is not a valid number!',
+    },
+  };
+
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    form.setFieldsValue({
+      name: currentUser?.name,
+      email: currentUser?.email,
+      phone: currentUser?.phone,
+      website: currentUser?.website
+    });
+  });
 
   return (
     <Modal
       title="Edit" 
       open={isModalOpen} 
-      onOk={handleCloseModal} 
-      onCancel={handleCancel}>
-        <div className={styles.editFieldWrapper}>
-          <div className={styles.label}>
-            <p>*</p>
-            Name:
-          </div>
-          <Input styles={{ height: "fit-content" }} value={currentUser?.name} onChange={(e) => {handleChange('name', e.target.value);}} required/>
-        </div>
-        <div className={styles.editFieldWrapper}>
-          <div className={styles.label}>
-            <p>*</p>
-            Email:
-          </div>
-          <Input type='email' styles={{ height: "fit-content" }} value={currentUser?.email}  onChange={(e) => {handleChange('email', e.target.value);}}/>
-        </div>
-        <div className={styles.editFieldWrapper}>
-          <div className={styles.label}>
-            <p>*</p>
-            Phone:
-          </div>
-          <Input styles={{ height: "fit-content" }} value={currentUser?.phone}  onChange={(e) => {handleChange('phone', e.target.value)}}/>
-        </div>
-        <div className={styles.editFieldWrapper}>
-          <div className={styles.label}>
-            <p>*</p>
-            Website:
-          </div>
-          <Input styles={{ height: "fit-content" }} value={currentUser?.website}  onChange={(e) => {handleChange('website', e.target.value);}}/>
-        </div>
+      onOk={() => {
+        form
+          .validateFields()
+          .then((values) => {
+            form.resetFields();
+            handleCloseModal(values);
+          })
+          .catch((info) => {
+            console.log('Validate Failed:', info);
+          });
+      }} 
+      onCancel={handleCancel}
+      forceRender>
+        <Form
+          form={form}
+          {...layout}
+          name="user-info"
+          style={{
+            maxWidth: 600,
+          }}
+          validateMessages={validateMessages}
+        >
+          <Form.Item
+            name={['name']}
+            label="Name"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input/>
+          </Form.Item>
+          <Form.Item
+            name={['email']}
+            label="Email"
+            rules={[
+              {
+                type: 'email',
+                required: true,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name={['phone']}
+            label="Phone"
+            rules={[
+              {
+                type: 'number',
+                required: true,
+              },
+            ]}
+          >
+            <InputNumber />
+          </Form.Item>
+          <Form.Item name={['website']} label="Website" rules={[
+              {
+                required: true,
+              },
+            ]}>
+            <Input />
+          </Form.Item>
+        </Form>
     </Modal>
   )
 }

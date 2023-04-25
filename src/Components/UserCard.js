@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import styles from '../styles/UserCard.module.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteUserData, updateCurrentUser, updateUserData, setLikedUser } from '../userDataSlice';
-import dynamic from "next/dynamic"
+import dynamic from "next/dynamic";
 
 const { Meta } = Card;
 
@@ -23,9 +23,9 @@ export default function UserCard() {
     dispatch(updateCurrentUser(user));
   };
 
-  function handleCloseModal() {
+  function handleCloseModal(values) {
     setIsModalOpen(false);
-    dispatch(updateUserData(currentUser));
+    dispatch(updateUserData([values, currentUser.id]));
   };
 
   function handleCancel() {
@@ -65,9 +65,10 @@ export default function UserCard() {
               />
             }
             actions={[
-              user.liked ? <HeartFilled key="filled-heart" style={{ color: 'hotpink' }} onClick={() => dispatch(setLikedUser(user.id))}/> : <HeartOutlined key="heart" style={{ color: 'hotpink' }} onClick={() => dispatch(setLikedUser(user.id))}/>,
-              <EditOutlined key="edit" onClick={() => handleOpenModal(user)}/>,
-              <DeleteFilled key="delete" onClick={() => handleDelete(user)}/>,
+              user.liked ? <HeartFilled key="filled-heart" style={{ color: 'red', fontSize: '18px' }} onClick={() => dispatch(setLikedUser(user.id))} /> 
+              : <HeartOutlined key="heart" style={{ color: 'red', fontSize: '18px' }} onClick={() => dispatch(setLikedUser(user.id))}/>,
+              <EditOutlined key="edit" onClick={() => handleOpenModal(user)} style={{ fontSize: '18px' }}/>,
+              <DeleteFilled key="delete" onClick={() => handleDelete(user)} style={{ fontSize: '18px' }}/>,
             ]}
           >
           <Meta
